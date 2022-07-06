@@ -3,12 +3,15 @@ const jwt = require("jsonwebtoken");
 
 const app = express();
 
+//sample get api
 app.get("/api", (req, res) => {
   res.json({
     message: "Welcome to api",
   });
 });
 
+//Api that requires authenication token
+//add token in headers with key as "Authorization" and value as "token"
 app.post("/api/posts", verifyToken, (req, res) => {
   try {
     jwt.verify(req.token, "secretKey", (err, authData) => {
@@ -31,6 +34,7 @@ app.post("/api/posts", verifyToken, (req, res) => {
   }
 });
 
+//This api will output the token which will expire in 40s
 app.post("/api/login", (req, res) => {
   const user = {
     id: 1,
@@ -38,6 +42,7 @@ app.post("/api/login", (req, res) => {
     email: "purvi@gmail.com",
   };
 
+  //sign in user with secret key
   jwt.sign({ user }, "secretKey", { expiresIn: "40s" }, (err, token) => {
     if (err) {
       res.json({ message: err });
@@ -48,6 +53,7 @@ app.post("/api/login", (req, res) => {
   });
 });
 
+//check whether given token in headers matches
 function verifyToken(req, res, next) {
   const bearerHeader = req.headers["authorization"];
 
